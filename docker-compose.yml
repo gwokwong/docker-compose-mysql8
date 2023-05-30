@@ -1,0 +1,35 @@
+version: "3"
+networks:
+    network:
+        name: "gwok-network"
+        ipam:
+            config:
+                - subnet: 10.66.68.0/24
+                  gateway: 10.66.68.1
+services:
+    mysql:
+        container_name: "gwok-mysql"
+        image: "mysql:8.0.19"
+        platform: linux/x86_64
+        ports:
+            - "33306:3306"
+        environment:
+            TZ: "Asia/Shanghai"
+            MYSQL_ROOT_PASSWORD: gwok123456
+            MYSQL_DATABASE: gwok
+            MYSQL_USER: gwok
+            MYSQL_PASSWORD: 123456
+        volumes:
+#            - ./sql:/docker-entrypoint-initdb.d/
+            - ./docker/mysql/conf.d:/etc/mysql/conf.d
+            - ./docker/mysql/data:/var/lib/mysql
+            - ./docker/mysql/logs:/logs
+        command:
+            --lower-case-table-names=1
+            --character-set-server=utf8mb4
+            --collation-server=utf8mb4_general_ci
+            --explicit_defaults_for_timestamp=true
+        networks:
+            network:
+                ipv4_address: 10.66.68.3
+        restart: always
